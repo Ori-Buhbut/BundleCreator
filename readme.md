@@ -1,13 +1,11 @@
-GOAL:
-easy way to create a superbundle with vehicles.
+# GOAL:
+### get all references of specific vehicle from EBX (resources/chunks).
 
-installation:
+## installation:
+- npm install
+- git clone https://github.com/VeniceUnleashed/Venice-EBX.git
 
-## npm install
-## git clone https://github.com/VeniceUnleashed/Venice-EBX.git
-
-running:
-
-edit appsettings.json
-make sure to have a correct path to ebx.
-npm start
+## how to run the projet:
+- edit appsettings.json
+- make sure to have a correct path to ebx.
+- npm start
