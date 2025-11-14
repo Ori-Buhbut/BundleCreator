@@ -3,8 +3,8 @@ easy way to create a superbundle with vehicles.
 
 installation:
 
-npm install
-git clone https://github.com/VeniceUnleashed/Venice-EBX.git
+## npm install
+## git clone https://github.com/VeniceUnleashed/Venice-EBX.git
 
 running:
 
