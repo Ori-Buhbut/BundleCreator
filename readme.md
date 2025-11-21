@@ -1,5 +1,5 @@
 # GOAL:
-### get all references of specific vehicle from EBX (resources/chunks).
+### get all references of specific asset from EBX (partitions/resources/chunks).
 
 ## installation:
 - npm install

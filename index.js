@@ -4,8 +4,8 @@ const ProgressBar = require('progress');
 const appsettings = JSON.parse(fs.readFileSync('./appsettings.json').toString());
 const RESOURCES = JSON.parse(fs.readFileSync('./resources.json'));
 const EBX_PATH = appsettings.EbxPath;
-const VEHICLE_MAIN_FOLDER_PATH = appsettings.vehicleMainFolder;
-const VEHICLE_NAME = appsettings.vehicleName;
+const MAIN_FOLDER_PATH = appsettings.mainFolder;
+const ASSET_NAME = appsettings.assetName;
 const GUID_REGEX = /[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/;
 const PATH_BEFORE_GUID_REGEX = /\/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/;
 const resources = [];
@@ -81,16 +81,16 @@ function SearchChunks(filePath, fileData) {
         }
 }
 
-var vehicleMainFile = fs.readFileSync(EBX_PATH + VEHICLE_MAIN_FOLDER_PATH + VEHICLE_NAME + '.txt');
-WriteFile(path.join(VEHICLE_NAME, VEHICLE_MAIN_FOLDER_PATH + VEHICLE_NAME + '.txt'), vehicleMainFile.toString());
+var mainFile = fs.readFileSync(EBX_PATH + MAIN_FOLDER_PATH + ASSET_NAME + '.txt');
+WriteFile(path.join(ASSET_NAME, MAIN_FOLDER_PATH + ASSET_NAME + '.txt'), mainFile.toString());
 
-var fileRows = GetReferencedFileNames(vehicleMainFile);
+var fileRows = GetReferencedFileNames(mainFile);
 
 var savedPaths = []
 while (fileRows.length > 0) {
     for (const row in fileRows) {
         let file = fs.readFileSync(path.join(EBX_PATH, fileRows[row]));
-        WriteFile(path.join(VEHICLE_NAME, fileRows[row]), file.toString());
+        WriteFile(path.join(ASSET_NAME, fileRows[row]), file.toString());
         if (GetReferencedFileNames(file)) {
             savedPaths.push(...GetReferencedFileNames(file));
         }
@@ -100,5 +100,5 @@ while (fileRows.length > 0) {
     savedPaths = [];
 }
 
-fs.writeFileSync('./' + VEHICLE_NAME + '/resources_output.json', JSON.stringify(resources, null, 2));
-fs.writeFileSync('./' + VEHICLE_NAME + '/chunks.json', JSON.stringify(chunks, null, 2));
+fs.writeFileSync('./' + ASSET_NAME + '/resources_output.json', JSON.stringify(resources, null, 2));
+fs.writeFileSync('./' + ASSET_NAME + '/chunks.json', JSON.stringify(chunks, null, 2));
