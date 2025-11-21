@@ -1,5 +1,5 @@
 # GOAL:
-### get all references of specific asset from EBX (partitions/resources/chunks).
+### generate one bundle for all BF3 vehicles in VU.
 
 ## installation:
 - npm install
@@ -7,5 +7,10 @@
 
 ## how to run the project:
 - edit appsettings.json
-- make sure to have a correct path to ebx.
 - npm start
+
+
+## TODO:
+- allow to parse multiple assets in one run (currently can parse one at a time).
+- create superbundle & bundle with RIME based on the data we collected from the ebx.
+
