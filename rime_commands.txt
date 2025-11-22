@@ -1,0 +1,26 @@
+// commands to get MeshSet ChunkIds
+mount_game <path> <engine>
+select_game 1
+dump_mesh_chunks <path>
+
+
+
+// commands to dunp partitions/resources/chunks
+mount_game <path> <engine>
+select_game 1
+dump_chunk <id> <destination>
+dump_resource <name> <destination>
+dump_partition <name> <destination>
+
+
+
+// commands to build super bundle & bundle
+mount_game <path> <engine>
+select_game 1
+build_sb <name> <engine> <output_path>
+build_bundle <name>
+add_chunk <guid> <asset_name> <file_path>
+add_resource <name> <type> <file_path>
+add_partition <name> <file_path>
+build
+build

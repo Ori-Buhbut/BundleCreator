@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const ProgressBar = require('progress');
+const _ = require('lodash');
 const appsettings = JSON.parse(fs.readFileSync('./appsettings.json').toString());
 const RESOURCES = JSON.parse(fs.readFileSync('./resources.json'));
 const EBX_PATH = appsettings.EbxPath;
@@ -10,6 +11,7 @@ const GUID_REGEX = /[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}
 const PATH_BEFORE_GUID_REGEX = /\/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/;
 const resources = [];
 const chunks = [];
+const partitions = [];
 
 function GetReferencedFileNames(file) {
     const rows = file.toString()
@@ -30,20 +32,19 @@ function GetReferencedFileNames(file) {
     return uniqueData;
 }
 
-function WriteFile(filePath, data) {
-    try {
-        if (fs.existsSync(filePath) == false) {
-            const dir = path.dirname(filePath);
-            fs.mkdirSync(dir, { recursive: true });
-            fs.writeFileSync(filePath, data);
-            console.log(`Write file --> ${filePath}`);
-            SearchChunks(filePath, data);
-            SearchResources(filePath, data);
-            console.log('\n');
-        }
-    } catch (error) {
-        console.error('Error writing file:', error);
-    }
+function SaveFiledata(filePath, data) {
+    SearchPartitions(filePath, data);
+    SearchChunks(filePath, data);
+    SearchResources(filePath, data);
+}
+
+function SearchPartitions(filePath, fileData) {
+    const partition = fileData.toString()
+        .split('\n').join('')
+        .split('\r')
+        .filter(row => row.includes("Partition "))[0];
+
+    partitions.push(partition.split("Partition ")[1]);
 }
 
 function SearchResources(filePath, fileData) {
@@ -57,7 +58,6 @@ function SearchResources(filePath, fileData) {
                 resourceType: RESOURCES[i].TypeName,
             });
             bar.tick(bar.total - bar.curr);
-            return;
         }
     }
 }
@@ -69,20 +69,49 @@ function SearchChunks(filePath, fileData) {
         .split('\t')
         .filter(row => GUID_REGEX.test(row));
 
-        const bar = new ProgressBar(':bar :percent', { total: rows.length, width: 40 });
-        for (let i = 0; i < rows.length; i++) {
-            bar.tick();
-            if(rows[i].includes("ChunkId")){
-                const chunkId = rows[i].split(' ')[1];
-                if(chunks.findIndex(ch=> ch == chunkId) == -1){
-                    chunks.push(chunkId);
-                }
+    const bar = new ProgressBar(':bar :percent', { total: rows.length, width: 40 });
+    for (let i = 0; i < rows.length; i++) {
+        bar.tick();
+        if (rows[i].includes("ChunkId")) {
+            const chunkId = rows[i].split(' ')[1];
+            if (chunks.findIndex(ch => ch == chunkId) == -1) {
+                chunks.push(chunkId);
             }
         }
+    }
+}
+
+async function GenerateRimeCommandFile(type) {
+    //TODO: Implements
+    switch (type) {
+        case "get-meshset-chunk-ids":
+            break;
+        case "dump-all":
+            break;
+        case "build-new-bundle":
+            break;
+    }
+}
+
+function GetMeshSetChunks() {
+    //TODO: Implement
+}
+
+
+function DumpAll() {
+    //TODO: Implement
+}
+
+function BuildNewBundle() {
+    //TODO: Implement
+}
+
+async function RunRimeBuilder() {
+    //TODO: Implement
 }
 
 var mainFile = fs.readFileSync(EBX_PATH + MAIN_FOLDER_PATH + ASSET_NAME + '.txt');
-WriteFile(path.join(ASSET_NAME, MAIN_FOLDER_PATH + ASSET_NAME + '.txt'), mainFile.toString());
+SaveFiledata(path.join(ASSET_NAME, MAIN_FOLDER_PATH + ASSET_NAME + '.txt'), mainFile.toString());
 
 var fileRows = GetReferencedFileNames(mainFile);
 
@@ -90,15 +119,17 @@ var savedPaths = []
 while (fileRows.length > 0) {
     for (const row in fileRows) {
         let file = fs.readFileSync(path.join(EBX_PATH, fileRows[row]));
-        WriteFile(path.join(ASSET_NAME, fileRows[row]), file.toString());
-        if (GetReferencedFileNames(file)) {
-            savedPaths.push(...GetReferencedFileNames(file));
-        }
+        SaveFiledata(path.join(ASSET_NAME, fileRows[row]), file.toString());
+        savedPaths.push(...GetReferencedFileNames(file));
     }
     fileRows = [];
     fileRows = JSON.parse(JSON.stringify([...new Set(savedPaths)]));
     savedPaths = [];
 }
 
-fs.writeFileSync('./' + ASSET_NAME + '/resources_output.json', JSON.stringify(resources, null, 2));
-fs.writeFileSync('./' + ASSET_NAME + '/chunks.json', JSON.stringify(chunks, null, 2));
+(
+    async () => {
+        console.log('RunRimeBuilder');
+        await RunRimeBuilder();
+    }
+)

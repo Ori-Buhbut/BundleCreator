@@ -12,5 +12,4 @@
 
 ## TODO:
 - allow to parse multiple assets in one run (currently can parse one at a time).
-- create superbundle & bundle with RIME based on the data we collected from the ebx.
-
+- generate .txt file of commands for RIME
